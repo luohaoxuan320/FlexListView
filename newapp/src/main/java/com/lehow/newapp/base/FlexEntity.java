@@ -2,24 +2,24 @@ package com.lehow.newapp.base;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 import com.lehow.newapp.R;
+import com.lehow.newapp.test.CategoryAdapter;
+import com.lehow.newapp.test.CategoryFieldProcessor;
 import com.lehow.newapp.test.DiscountSelectFieldProcessor;
+import com.lehow.newapp.test.FoldCombineFuc;
 import com.lehow.newapp.test.NumAdapter;
 import com.lehow.newapp.test.NumFieldProcessor;
 import com.lehow.newapp.test.SelectAdapter;
 import com.lehow.newapp.test.ShowAdapter;
 import com.lehow.newapp.test.SimpleSelectFieldProcessor;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Function3;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,20 +52,14 @@ public class FlexEntity {
     //flexFieldArrayList = new ArrayList<>();
     fieldProxyAdapters = new ArrayList<>();
 
+    fieldProxyAdapters.add(CategoryAdapter.class);
     fieldProxyAdapters.add(NumAdapter.class);
     fieldProxyAdapters.add(ShowAdapter.class);
     fieldProxyAdapters.add(SelectAdapter.class);
 
-    final FlexField<Boolean> aCategory = new FlexField<Boolean>("aCategory", true).setSummary("A价款选项")
-        .setProxyViewType(getProxyViewType(SelectAdapter.class))
-        .setFlexFieldProcessor(new FlexFieldProcessor<Boolean>() {
-          @Override public void onFieldClick(Activity activity, FlexField<Boolean> flexField) {
-            flexField.setValue(!flexField.getValue());
-          }
-
-          @Override public void onChange(FlexField flexField, Bundle bundle) {
-          }
-        });
+    final FlexField<Boolean> aCategory = new FlexField("aCategory", true).setSummary("A价款选项")
+        .setProxyViewType(getProxyViewType(CategoryAdapter.class))
+        .setFlexFieldProcessor(new CategoryFieldProcessor());
     addAndPutField(aCategory);
     final FlexField<Float> aamount = new FlexField("aamount", 1000f).setTitle("A价款总价")
         .setSummary("1000")
@@ -190,46 +184,7 @@ public class FlexEntity {
 
     addToMap(aLoan1Rate);
 
-    Observable.combineLatest(aCategory.valueObservable, aLoanType.valueObservable,
-        new BiFunction<Boolean, Integer, VisibleField>() {
-          @Override public VisibleField apply(Boolean aBoolean, Integer type)
-              throws Exception {
-            Log.i("TAG", "apply: aCategory and aLoanType aBoolean="+aBoolean+" type="+type);
-            int position = showFieldList.indexOf(aLoanType.getKey());
-            VisibleField visibleField;
-            if (aBoolean) {//分类展开了
-              if (position == -1) {
-                position = showFieldList.indexOf(aCategory.getKey());
-                visibleField = new VisibleField(position).visible("aamount","adicont","adiscontAmount","aFirstPercent","aFirstAmount","aLoanType");
-              }else{//贷款类别变化
-                visibleField = new VisibleField(position);
-              }
-
-              if (type == 1) {
-                return visibleField.invisible("aLoan", "aLoanAmount", "aLoanYear",
-                        "aLoanRate")
-                        .invisible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate")
-                        .visible("aLoan", "aLoanAmount", "aLoanYear", "aLoanRate");
-              } else if (type == 2) {
-                return visibleField.invisible("aLoan", "aLoanAmount", "aLoanYear",
-                    "aLoanRate")
-                    .invisible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate")
-                    .visible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate");
-              } else if (type == 3) {
-                return visibleField.invisible("aLoan", "aLoanAmount", "aLoanYear",
-                    "aLoanRate")
-                    .invisible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate")
-                    .visible("aLoan", "aLoanAmount", "aLoanYear", "aLoanRate")
-                    .visible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate");
-              }
-              return null;
-            } else {
-              return new VisibleField(position).invisible("aLoan", "aLoanAmount", "aLoanYear",
-                      "aLoanRate").invisible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate")
-                  .invisible("aamount","adicont","adiscontAmount","aFirstPercent","aFirstAmount","aLoanType");
-            }
-          }
-        }).subscribe(visibleFieldConsumer);
+    new FoldCombineFuc(this).getCombineObeserver().subscribe(visibleFieldConsumer);
 
    /* aLoanType.valueObservable.flatMap(new Function<Integer, ObservableSource<VisibleField>>() {
       @Override public ObservableSource<VisibleField> apply(Integer s) throws Exception {
@@ -452,4 +407,12 @@ public class FlexEntity {
     return allFieldMap.get(fieldName);
   }
 
+  /**
+   * 当前的key对应的字段在showList中的位置。注意这个跟findFlexField 返回的FlexField 中获取的adapterPosition的区别，
+   * adapterPosition只有bindViewHolder后，这个adapterPosition才是有意义的
+   * 而indexInShow 可以识别没有onBindView的，但是在showList中的field，这个跟准确
+   */
+  public int indexInShow(String fieldName) {
+    return showFieldList.indexOf(fieldName);
+  }
 }

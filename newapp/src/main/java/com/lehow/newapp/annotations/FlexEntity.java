@@ -13,4 +13,5 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
  */
 @Retention(CLASS) @Target(TYPE)
 public @interface FlexEntity {
+  CombineVisible[] combineVisible();
 }

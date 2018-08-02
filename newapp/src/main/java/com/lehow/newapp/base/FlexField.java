@@ -3,6 +3,7 @@ package com.lehow.newapp.base;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
@@ -16,7 +17,7 @@ public class FlexField<T> implements Consumer<T> {
   InnerFlexField<T> flexField;
 
   /**
-   * 在Adapter中的position
+   * 在Adapter中的position,用于notifyItemChange快速刷新
    */
   int adapterPosition = -1;
 
@@ -64,7 +65,6 @@ public class FlexField<T> implements Consumer<T> {
     flexField.hint = hint;
     return this;
   }
-
 
   public FlexField setValue(T value) {
     flexField.value = value;
@@ -128,5 +128,8 @@ public class FlexField<T> implements Consumer<T> {
     valueObservable.onNext(flexField.value);
   }*/
 
+  public Observable<T> getValueObservable() {
+    return valueObservable;
+  }
 
 }

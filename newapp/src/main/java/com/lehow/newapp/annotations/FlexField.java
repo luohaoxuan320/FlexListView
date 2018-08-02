@@ -1,8 +1,10 @@
 package com.lehow.newapp.annotations;
 
 import com.lehow.newapp.base.FieldProxyAdapter;
+import com.lehow.newapp.base.FlexFieldProcessor;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.PrimitiveIterator;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.CLASS;
@@ -43,6 +45,14 @@ public @interface FlexField {
    * @return
    */
   Class<? extends FieldProxyAdapter> proxyAdapter();
+
+  Class<? extends FlexFieldProcessor> fieldProcessor();
+
+  /**
+   * 定义为String，方便接收数据
+   * 注入的时候会根据字段的实际类型，转换
+   */
+  String value() default "";
 
 
 }
