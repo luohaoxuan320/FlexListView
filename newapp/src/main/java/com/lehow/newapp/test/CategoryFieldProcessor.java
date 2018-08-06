@@ -2,8 +2,8 @@ package com.lehow.newapp.test;
 
 import android.app.Activity;
 import android.os.Bundle;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.FlexFieldProcessor;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
 
 /**
  * desc:

@@ -1,4 +1,4 @@
-package com.lehow.newapp.annotations;
+package com.lehow.flex.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

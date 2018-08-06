@@ -1,6 +1,6 @@
-package com.lehow.newapp.annotations;
+package com.lehow.flex.annotations;
 
-import com.lehow.newapp.base.FlexFieldProcessor;
+import com.lehow.flex.base.FlexFieldProcessor;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

@@ -8,12 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.Toast;
-import com.lehow.newapp.base.FlexEntity;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.FieldProxyAdapter;
-import com.lehow.newapp.base.FlexFieldProcessor;
-import com.lehow.newapp.test.SimpleSelectFieldProcessor;
-import java.util.ArrayList;
+import com.lehow.flex.base.FlexEntity;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
+import com.lehow.newapp.entity.PriceEntity;
+import com.lehow.newapp.entity.PriceEntity$$FlexEntity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,13 +27,13 @@ public class MainActivity extends AppCompatActivity {
         new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(linearLayoutManager);
     linearLayoutManager.setSmoothScrollbarEnabled(true);
-    flexEntity = FlexEntity.create(null);
-    recyclerView.setAdapter(flexEntity.getFlexAdapter());
+    this.flexEntity = FlexEntity.create(new PriceEntity());
+    recyclerView.setAdapter(this.flexEntity.getFlexAdapter());
     recyclerView.setNestedScrollingEnabled(false);
     recyclerView.setItemAnimator(null);//这里要取消动画，否则在notifyItemChanged时，会onCreateViewHolder 生成一个新的ViewHolder来做动画的过度，
     // 如果当前的item中含有EditText，会导致我在Holder中记录的光标位置无效。当然也可以考虑在别的地方记录光标位置，目前放在这
 
-    flexEntity.setFieldClickListener("aamount", new FlexFieldProcessor() {
+    this.flexEntity.setFieldClickListener("aamount", new FlexFieldProcessor() {
       @Override public void onFieldClick(Activity activity, FlexField flexField) {
 
       }

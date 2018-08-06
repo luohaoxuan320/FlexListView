@@ -1,4 +1,4 @@
-package com.lehow.newapp.base;
+package com.lehow.newapp.entity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+import com.lehow.flex.base.FieldProxyAdapter;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
+import com.lehow.flex.base.ProxyViewHolder;
+import com.lehow.flex.base.VisibleField;
 import com.lehow.newapp.R;
 import com.lehow.newapp.test.CategoryAdapter;
 import com.lehow.newapp.test.CategoryFieldProcessor;
@@ -81,7 +86,8 @@ public class FlexEntity {
         .setProxyViewType(getProxyViewType(ShowAdapter.class))
         .setFlexFieldProcessor(new NumFieldProcessor()).notifyAdapter(flexFieldAdapter);
 
-    Observable.combineLatest(aamount.valueObservable, adiscont.valueObservable, new BiFunction<Float, String, Float>() {
+    Observable.combineLatest(aamount.getValueObservable(), adiscont.getValueObservable(),
+        new BiFunction<Float, String, Float>() {
       @Override public Float apply(Float aFloat, String s) throws Exception {
         float parseFloat = Float.parseFloat(s);
         Log.i("TAG", "apply: 折后总价="+(aFloat+parseFloat));
@@ -107,7 +113,8 @@ public class FlexEntity {
 
     addToMap(aFirstAmount);
 
-    Observable.combineLatest(adiscontAmount.valueObservable, aFirstPercent.valueObservable,
+    Observable.combineLatest(adiscontAmount.getValueObservable(),
+        aFirstPercent.getValueObservable(),
         new BiFunction<Float, Integer, Float>() {
           @Override public Float apply(Float aFloat, Integer aFloat2) throws Exception {
             return aFloat*aFloat2*0.1f;
@@ -128,7 +135,7 @@ public class FlexEntity {
         .setHint("公积金贷款")
         .setProxyViewType(getProxyViewType(ShowAdapter.class))
         ;
-    aLoanType.valueObservable.subscribe();
+    aLoanType.getValueObservable().subscribe();
     addToMap(aLoan);
 
     FlexField<Float> aLoanAmount =new FlexField("aLoanAmount",0f)
@@ -213,7 +220,8 @@ public class FlexEntity {
       }
     }).subscribe(visibleFieldConsumer);*/
 
-    Observable.combineLatest(aamount.valueObservable, aFirstAmount.valueObservable, aLoanType.valueObservable,
+    Observable.combineLatest(aamount.getValueObservable(), aFirstAmount.getValueObservable(),
+        aLoanType.getValueObservable(),
         new Function3<Float, Float, Integer, Float>() {
           @Override public Float apply(Float aFloat, Float aFloat2, Integer type)
               throws Exception {
@@ -225,7 +233,8 @@ public class FlexEntity {
           }
         }).subscribe(aLoan1Amount);
 
-    Observable.combineLatest(aamount.valueObservable, aFirstAmount.valueObservable, aLoanType.valueObservable,
+    Observable.combineLatest(aamount.getValueObservable(), aFirstAmount.getValueObservable(),
+        aLoanType.getValueObservable(),
         new Function3<Float, Float, Integer, Float>() {
           @Override public Float apply(Float aFloat, Float aFloat2, Integer type)
               throws Exception {

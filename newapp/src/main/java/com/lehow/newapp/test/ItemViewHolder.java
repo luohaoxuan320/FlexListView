@@ -9,8 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.lehow.newapp.R;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.ProxyViewHolder;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.ProxyViewHolder;
 
 /**
  * desc:
@@ -32,7 +32,7 @@ public class ItemViewHolder extends ProxyViewHolder {
     etSummary.addTextChangedListener(mTextWatcher);
   }
 
-  @Override protected void onReset() {
+  @Override public void onReset() {
     Log.i("TAG", "onReset: ");
     etSummary.setSelection(0);
     mTextWatcher.flexField =null;//保险起见，这里在回收的时候清空，防止由于复用，

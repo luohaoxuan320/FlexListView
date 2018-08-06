@@ -1,4 +1,4 @@
-package com.lehow.newapp.base;
+package com.lehow.flex.base;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,5 +13,5 @@ public abstract class ProxyViewHolder extends RecyclerView.ViewHolder{
     super(itemView);
   }
 
- protected abstract void onReset();
+  public abstract void onReset();
 }

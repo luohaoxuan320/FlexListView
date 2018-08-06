@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.ArrayRes;
-import com.lehow.newapp.R;
 import com.lehow.newapp.SimpleSelectActivity;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.FlexFieldProcessor;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
 
 /**
  * desc:
@@ -20,6 +19,10 @@ public class SimpleSelectFieldProcessor implements FlexFieldProcessor {
   int[] values;
   int dataRes;
   int valueRes;
+
+  public SimpleSelectFieldProcessor() {
+  }
+
   public SimpleSelectFieldProcessor(@ArrayRes int dataRes,@ArrayRes int valueRes,int selIndex) {
     this.selIndex = selIndex;
     this.dataRes = dataRes;

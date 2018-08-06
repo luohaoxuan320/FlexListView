@@ -1,4 +1,4 @@
-package com.lehow.newapp.base;
+package com.lehow.flex.base;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;

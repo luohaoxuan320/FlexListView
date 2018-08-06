@@ -1,8 +1,8 @@
 package com.lehow.newapp.test;
 
 import android.util.Log;
-import com.lehow.newapp.base.FlexEntity;
-import com.lehow.newapp.base.VisibleField;
+import com.lehow.newapp.entity.FlexEntity;
+import com.lehow.flex.base.VisibleField;
 import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
 

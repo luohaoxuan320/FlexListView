@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.lehow.newapp.R;
-import com.lehow.newapp.base.FieldProxyAdapter;
-import com.lehow.newapp.base.FlexEntity;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.ProxyViewHolder;
+import com.lehow.flex.base.FieldProxyAdapter;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.ProxyViewHolder;
 
 /**
  * desc:
@@ -44,7 +43,7 @@ public class CategoryAdapter implements FieldProxyAdapter<CategoryAdapter.Catego
       title = itemView.findViewById(R.id.title);
     }
 
-    @Override protected void onReset() {
+   @Override public void onReset() {
 
     }
   }

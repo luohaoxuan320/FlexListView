@@ -1,8 +1,7 @@
-package com.lehow.newapp.base;
+package com.lehow.flex.base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * desc:

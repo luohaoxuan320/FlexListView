@@ -3,8 +3,9 @@ package com.lehow.newapp.test;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.FlexFieldProcessor;
+import android.util.Log;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
 
 /**
  * desc:
@@ -17,6 +18,7 @@ public class NumFieldProcessor implements FlexFieldProcessor {
   }
 
   @Override public void onChange(FlexField flexField, Bundle bundle) {
+    Log.i("TAG", "NumFieldProcessor onChange: value=" + flexField.getValue());
     String curInput = null;
     if (bundle == null) {//级联通知的更新
       curInput=String.valueOf(flexField.getValue());

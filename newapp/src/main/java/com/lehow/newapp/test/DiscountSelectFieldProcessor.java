@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import com.lehow.newapp.DiscountActivity;
-import com.lehow.newapp.base.FlexField;
-import com.lehow.newapp.base.FlexFieldProcessor;
+import com.lehow.flex.base.FlexField;
+import com.lehow.flex.base.FlexFieldProcessor;
 
 /**
  * desc:

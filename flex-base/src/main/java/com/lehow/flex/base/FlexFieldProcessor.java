@@ -1,4 +1,4 @@
-package com.lehow.newapp.base;
+package com.lehow.flex.base;
 
 import android.app.Activity;
 import android.os.Bundle;

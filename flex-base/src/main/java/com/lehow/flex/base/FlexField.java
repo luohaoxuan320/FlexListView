@@ -1,8 +1,5 @@
-package com.lehow.newapp.base;
+package com.lehow.flex.base;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
@@ -34,9 +31,12 @@ public class FlexField<T> implements Consumer<T> {
   PublishSubject<Integer> positionObservable = null;
   public FlexField(String key,T value) {
     this.flexField = new InnerFlexField<>(key,value);
-    valueObservable = BehaviorSubject.createDefault(flexField.value);
+    if (flexField.value != null) {
+      valueObservable = BehaviorSubject.createDefault(flexField.value);
+    } else {
+      valueObservable = BehaviorSubject.create();
+    }
     positionObservable = PublishSubject.create();
-    this.flexFieldProcessor = flexFieldProcessor;
   }
 
   public FlexField setTitle(String title) {
@@ -85,6 +85,8 @@ public class FlexField<T> implements Consumer<T> {
 
   public FlexField<T> setFlexFieldProcessor(FlexFieldProcessor flexFieldProcessor) {
     this.flexFieldProcessor = flexFieldProcessor;
+    //设置了处理器后，先来处理下默认值的显示
+    if (flexFieldProcessor != null) flexFieldProcessor.onChange(this, null);
     return this;
   }
 
