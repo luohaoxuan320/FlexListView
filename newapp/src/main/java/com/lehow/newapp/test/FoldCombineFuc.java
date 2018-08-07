@@ -1,7 +1,7 @@
 package com.lehow.newapp.test;
 
 import android.util.Log;
-import com.lehow.flex.base.CombineVisibleFuc;
+import com.lehow.flex.base.CombineFuc;
 import com.lehow.flex.base.FlexEntity;
 import com.lehow.flex.base.VisibleField;
 import io.reactivex.Observable;
@@ -15,7 +15,7 @@ import io.reactivex.functions.BiFunction;
  * author: luoh17
  * time: 2018/8/2 14:17
  */
-public class FoldCombineFuc extends CombineVisibleFuc
+public class FoldCombineFuc extends CombineFuc
     implements BiFunction<Boolean, Integer, VisibleField> {
 
   public FoldCombineFuc(FlexEntity flexEntity) {

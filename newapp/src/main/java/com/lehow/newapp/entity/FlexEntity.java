@@ -25,6 +25,7 @@ import com.lehow.newapp.test.SimpleSelectFieldProcessor;
 import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Function3;
 import java.util.ArrayList;
 import java.util.HashMap;

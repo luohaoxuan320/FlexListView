@@ -3,8 +3,10 @@ package com.lehow.newapp.entity;
 import com.lehow.flex.annotations.FlexEntity;
 import com.lehow.flex.annotations.FlexField;
 import com.lehow.flex.annotations.CombineVisible;
+import com.lehow.flex.annotations.ValueDependence;
 import com.lehow.newapp.test.CategoryAdapter;
 import com.lehow.newapp.test.CategoryFieldProcessor;
+import com.lehow.newapp.test.DiscontAmountFuc;
 import com.lehow.newapp.test.DiscountSelectFieldProcessor;
 import com.lehow.newapp.test.FoldCombineFuc;
 import com.lehow.newapp.test.NumAdapter;
@@ -29,8 +31,9 @@ public class PriceEntity {
   @FlexField(title = "A价款总价", proxyAdapter = NumAdapter.class) String aamount = "1000";
       //将这个定义为String，方便数据的处理，不然会觉得莫名的多了一个.0
   @FlexField(title = "折扣信息", hint = "请选择折扣", proxyAdapter = SelectAdapter.class, fieldProcessor = DiscountSelectFieldProcessor.class)
-  String adicont;
+      String adicont;
   @FlexField(title = "折后总价", hint = "", proxyAdapter = ShowAdapter.class, fieldProcessor = NumFieldProcessor.class)
+  @ValueDependence(dependenOn = { "aamount", "adicont" }, func = DiscontAmountFuc.class)
   double adiscontAmount = 700;
   @FlexField(title = "首付成数", hint = "请选择", proxyAdapter = SelectAdapter.class, fieldProcessor = SimpleSelectFieldProcessor.class)
   int aFirstPercent = 3;

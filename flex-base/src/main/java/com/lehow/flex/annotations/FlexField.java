@@ -49,5 +49,4 @@ public @interface FlexField {
 
   boolean visible() default true;
 
-
 }

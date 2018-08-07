@@ -3,6 +3,7 @@ package com.lehow.flex.processor;
 import com.google.auto.service.AutoService;
 import com.lehow.flex.annotations.FlexEntity;
 import com.lehow.flex.annotations.FlexField;
+import com.lehow.flex.annotations.ValueDependence;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -11,8 +12,10 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -63,13 +66,16 @@ public class FlexAptProcessor extends AbstractProcessor {
       MethodSpec.Builder creteListBuilder = MethodSpec.methodBuilder("createFieldList")
           .addModifiers(Modifier.PROTECTED)
           .returns(TypeName.VOID);
+      MethodSpec.Builder createDependence =
+          MethodSpec.methodBuilder("createDependence").addModifiers(Modifier.PROTECTED).returns(TypeName.VOID);
       for (Element enclosedElement : enclosedElements) {
         FlexField flexField = enclosedElement.getAnnotation(FlexField.class);
         if (flexField != null) {
           String key = flexField.key();
           //如果key为空，则默认为字段名
           key = (key == null || key.isEmpty()) ? enclosedElement.getSimpleName().toString() : key;
-          if (getFieldAnnotationClass(enclosedElement, "fieldProcessor") == null) {
+          if (getFieldAnnotationClass(enclosedElement, FlexField.class.getName(), "fieldProcessor")
+              == null) {
             creteListBuilder.addStatement("add(new $T(\""
                     + key
                     + "\",entity."
@@ -88,7 +94,8 @@ public class FlexAptProcessor extends AbstractProcessor {
                     + "                .setFlexFieldProcessor(null),"
                     + flexField.visible()
                     + ")", ClassName.bestGuess("com.lehow.flex.base.FlexField"),
-                getFieldAnnotationClass(enclosedElement, "proxyAdapter"));
+                getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
+                    "proxyAdapter"));
           } else {
             creteListBuilder.addStatement("add(new $T(\""
                     + key
@@ -108,12 +115,43 @@ public class FlexAptProcessor extends AbstractProcessor {
                     + "                .setFlexFieldProcessor(new $T()),"
                     + flexField.visible()
                     + ")", ClassName.bestGuess("com.lehow.flex.base.FlexField"),
-                getFieldAnnotationClass(enclosedElement, "proxyAdapter"),
-                getFieldAnnotationClass(enclosedElement, "fieldProcessor"));
+                getFieldAnnotationClass(enclosedElement, FlexField.class.getName(), "proxyAdapter"),
+                getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
+                    "fieldProcessor"));
           }
 
           info(flexField.title());
+          ValueDependence valueDependence = enclosedElement.getAnnotation(ValueDependence.class);
+          if (valueDependence == null) continue;
+          String[] keys = valueDependence.dependenOn();
+          TypeName typeName =
+              getFieldAnnotationClass(enclosedElement, ValueDependence.class.getName(), "func");
+          if (keys == null || keys.length == 0) {
+            //忽略掉
+            continue;
+          } else {
+            if (keys.length == 1) {
+              createDependence.addStatement("findFlexField(\""
+                  + keys[0]
+                  + "\").getValueObservable().map(new $T() {\n"
+                  + "    }).subscribe(findFlexField(\""
+                  + key
+                  + "\"))", typeName);
+            } else {
+              StringBuilder stringBuilder = new StringBuilder();
+              for (String s : keys) {
+                stringBuilder.append("findFlexField(\"" + s + "\").getValueObservable(),");
+              }
+              createDependence.addStatement("$T.combineLatest("
+                  + stringBuilder
+                  + "new $T()).subscribe(findFlexField(\""
+                  + key
+                  + "\"))", ClassName.bestGuess("io.reactivex.Observable"), typeName);
+            }
+          }
         }
+
+
       }
       MethodSpec constructor = MethodSpec.constructorBuilder()
           .addModifiers(Modifier.PRIVATE)
@@ -122,9 +160,7 @@ public class FlexAptProcessor extends AbstractProcessor {
           .addStatement("super(entity)")
           .build();
 
-      MethodSpec.Builder createDependence = MethodSpec.methodBuilder("createDependence")
-          .addModifiers(Modifier.PROTECTED)
-          .returns(TypeName.VOID);
+      //添加可见性的依赖关系
       initEntityCombineVisible(flexEntityElement, createDependence);
       TypeSpec flexEntityTypeSpec =
           TypeSpec.classBuilder(flexEntityElement.getSimpleName() + "$$FlexEntity")
@@ -147,9 +183,10 @@ public class FlexAptProcessor extends AbstractProcessor {
     return false;
   }
 
-  private TypeName getFieldAnnotationClass(Element flexFieldElement, String property) {
+  private TypeName getFieldAnnotationClass(Element flexFieldElement, String annotationName,
+      String property) {
     for (AnnotationMirror annotationMirror : flexFieldElement.getAnnotationMirrors()) {
-      if (annotationMirror.getAnnotationType().toString().equals(FlexField.class.getName())) {
+      if (annotationMirror.getAnnotationType().toString().equals(annotationName)) {
         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror
             .getElementValues()
             .entrySet()) {

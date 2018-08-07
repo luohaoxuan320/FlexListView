@@ -1,5 +1,6 @@
 package com.lehow.flex.annotations;
 
+import com.lehow.flex.base.CombineFuc;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -14,5 +15,8 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
 @Retention(CLASS) @Target(FIELD) public @interface ValueDependence {
   String[] dependenOn();
 
-  Class<?> function();
+  /**
+   * io.reactivex.functions 下的function
+   */
+  Class<?> func();
 }
