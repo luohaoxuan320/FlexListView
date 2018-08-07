@@ -45,7 +45,7 @@ public @interface FlexField {
    */
   Class<? extends FieldProxyAdapter> proxyAdapter();
 
-  Class<? extends FlexFieldProcessor> fieldProcessor();
+  Class<? extends FlexFieldProcessor> fieldProcessor() default FlexFieldProcessor.class;
 
   boolean visible() default true;
 

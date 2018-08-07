@@ -15,7 +15,7 @@ public class CategoryFieldProcessor implements FlexFieldProcessor<Boolean> {
     flexField.setValue(!flexField.getValue());
   }
 
-  @Override public void onChange(FlexField flexField, Bundle bundle) {
-
+  @Override public boolean onChange(FlexField flexField, Bundle bundle) {
+    return true;
   }
 }

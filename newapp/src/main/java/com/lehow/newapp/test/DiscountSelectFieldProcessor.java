@@ -20,12 +20,13 @@ public class DiscountSelectFieldProcessor implements FlexFieldProcessor {
     activity.startActivityForResult(intent,flexField.getAdapterPosition());
   }
 
-  @Override public void onChange(FlexField flexField, Bundle bundle) {
+  @Override public boolean onChange(FlexField flexField, Bundle bundle) {
     if (bundle != null) {
       flexField.setSummary(bundle.getString("discount"));
       flexField.setValue(bundle.getString("value"));
     }else{//级联更新
 
     }
+    return true;
   }
 }

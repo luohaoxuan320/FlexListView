@@ -2,6 +2,8 @@ package com.lehow.newapp;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -14,26 +16,21 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
   @Test public void addition_isCorrect() {
 
-    int j = 1;
-    int i = j + 2;
-    System.out.println("i=" + i);
-    j = 3;
-    System.out.println("i=" + i);
-
-    BehaviorSubject<Integer> behaviorSubject = BehaviorSubject.createDefault(1);
-
-    Consumer<Integer> integerConsumer=new Consumer<Integer>() {
-      @Override public void accept(Integer integer) throws Exception {
-        System.out.println("accept=" + integer);
-      }
-    };
-    //behaviorSubject.onNext(1);
-    behaviorSubject.subscribe(integerConsumer);
-    //behaviorSubject.subscribe(integerConsumer);
-    //
-    //behaviorSubject.onNext(2);
-
-
-    //assertEquals(4, 2 + 2);
+    DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
+    System.out.println(decimalFormat.format(1234.50));
+    String format1 = decimalFormat.format(12345.678);
+    System.out.println(format1);
+    try {
+      System.out.println("format1=" + decimalFormat.parse(format1).doubleValue());
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+    String format = DecimalFormat.getNumberInstance().format(12345.678);
+    System.out.println("format=" + format);
+    try {
+      System.out.println(DecimalFormat.getNumberInstance().parse(format));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
   }
 }

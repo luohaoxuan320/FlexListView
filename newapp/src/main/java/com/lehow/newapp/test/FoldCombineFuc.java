@@ -1,7 +1,8 @@
 package com.lehow.newapp.test;
 
 import android.util.Log;
-import com.lehow.newapp.entity.FlexEntity;
+import com.lehow.flex.base.CombineVisibleFuc;
+import com.lehow.flex.base.FlexEntity;
 import com.lehow.flex.base.VisibleField;
 import io.reactivex.Observable;
 import io.reactivex.functions.BiFunction;
@@ -14,14 +15,14 @@ import io.reactivex.functions.BiFunction;
  * author: luoh17
  * time: 2018/8/2 14:17
  */
-public class FoldCombineFuc implements BiFunction<Boolean, Integer, VisibleField> {
-  FlexEntity flexEntity;
+public class FoldCombineFuc extends CombineVisibleFuc
+    implements BiFunction<Boolean, Integer, VisibleField> {
 
   public FoldCombineFuc(FlexEntity flexEntity) {
-    this.flexEntity = flexEntity;
+    super(flexEntity);
   }
 
-  public Observable getCombineObeserver() {
+  public Observable getCombineObservable() {
     return Observable.combineLatest(flexEntity.findFlexField("aCategory").getValueObservable(),
         flexEntity.findFlexField("aLoanType").getValueObservable(), this);
   }
@@ -53,7 +54,7 @@ public class FoldCombineFuc implements BiFunction<Boolean, Integer, VisibleField
             .visible("aLoan", "aLoanAmount", "aLoanYear", "aLoanRate")
             .visible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate");
       }
-      return null;
+      return visibleField;
     } else {
       return new VisibleField(position).invisible("aLoan", "aLoanAmount", "aLoanYear", "aLoanRate")
           .invisible("aLoan1", "aLoan1Amount", "aLoan1Year", "aLoan1Rate")

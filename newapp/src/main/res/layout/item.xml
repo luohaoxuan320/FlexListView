@@ -27,9 +27,8 @@
       android:layout_toStartOf="@+id/iv_more"
       android:background="@null"
       android:hint="请输入金额"
-      android:digits="1234567890"
       android:gravity="right"
-      android:inputType="text"
+      android:inputType="numberDecimal"
       android:textColor="#aaa"
       android:textSize="14sp"
       />

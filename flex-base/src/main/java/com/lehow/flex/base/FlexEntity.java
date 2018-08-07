@@ -34,7 +34,8 @@ public abstract class FlexEntity<K> {
 
   protected FlexEntity(K entity) {
     this.entity = entity;
-    creteFieldList();
+    createFieldList();
+    createDependence();
   }
 
   public static <T> FlexEntity create(T entity) {
@@ -51,7 +52,18 @@ public abstract class FlexEntity<K> {
     }
   }
 
-  protected abstract void creteFieldList();
+  /**
+   * 将字段注解数据解析为集合列表
+   */
+  protected abstract void createFieldList();
+
+  /**
+   * 处理字段间的依赖，
+   * 1.数值变化的依赖 比如首付金额依赖 总价和首付成数
+   * 2.字段可见性之间的依赖
+   */
+  protected abstract void createDependence();
+
 
   protected <T> void add(FlexField<T> flexField, boolean isShow) {
     flexField.notifyAdapter(flexFieldAdapter);
@@ -179,7 +191,7 @@ public abstract class FlexEntity<K> {
     }
   }
 
-  private Consumer<VisibleField> visibleFieldConsumer = new Consumer<VisibleField>() {
+  protected Consumer<VisibleField> visibleFieldConsumer = new Consumer<VisibleField>() {
     @Override public void accept(VisibleField visibleField) throws Exception {
       if (visibleField.getPosition() != -1) {
         invisibleField(visibleField.getInvisibleKeys());//先删除

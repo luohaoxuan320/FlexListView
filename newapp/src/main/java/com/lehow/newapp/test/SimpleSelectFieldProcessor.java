@@ -40,7 +40,7 @@ public class SimpleSelectFieldProcessor implements FlexFieldProcessor {
     activity.startActivityForResult(intent,flexField.getAdapterPosition());
   }
 
-  @Override public void onChange(FlexField flexField, Bundle bundle) {
+  @Override public boolean onChange(FlexField flexField, Bundle bundle) {
     if (bundle != null) {
       selIndex = bundle.getInt("selIndex", -1);
       flexField.setSummary(selIndex == -1 ? "" : dataSrc[selIndex]);
@@ -48,6 +48,7 @@ public class SimpleSelectFieldProcessor implements FlexFieldProcessor {
     }else{//级联更新
 
     }
+    return true;
   }
 
   public int getSelIndex() {

@@ -17,7 +17,7 @@ public class NumFieldProcessor implements FlexFieldProcessor {
     //donothing
   }
 
-  @Override public void onChange(FlexField flexField, Bundle bundle) {
+  @Override public boolean onChange(FlexField flexField, Bundle bundle) {
     Log.i("TAG", "NumFieldProcessor onChange: value=" + flexField.getValue());
     String curInput = null;
     if (bundle == null) {//级联通知的更新
@@ -28,5 +28,6 @@ public class NumFieldProcessor implements FlexFieldProcessor {
     flexField.setSummary(curInput);
     //通知Recyclerview刷新
     flexField.setValue(TextUtils.isEmpty(curInput) ? 0f : Float.parseFloat(curInput));
+    return true;
   }
 }

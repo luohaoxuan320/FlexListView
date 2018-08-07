@@ -1,5 +1,6 @@
 package com.lehow.flex.annotations;
 
+import com.lehow.flex.base.CombineVisibleFuc;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -21,5 +22,5 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
   /**
    * 这里是Rx的封装，要注意keys与combineProcessor的Function的对应
    */
-  Class<?> combineFuc();
+  Class<? extends CombineVisibleFuc> combineFuc();
 }

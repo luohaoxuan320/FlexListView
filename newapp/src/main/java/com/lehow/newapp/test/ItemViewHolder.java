@@ -41,19 +41,18 @@ public class ItemViewHolder extends ProxyViewHolder {
   }
 
   public void bindFlexField(FlexField flexField) {
-    mTextWatcher.flexField = flexField;
+    mTextWatcher.flexField = flexField;//在这里绑定感觉是有点问题的，afterTextChanged先执行了，不过onReset有清空数据，影响不大
     Log.i("TAG", "bindFlexField: focusIndex="+focusIndex);
-    etSummary.setSelection(focusIndex);
+    etSummary.setSelection(Math.min(focusIndex, etSummary.getText().length()));
   }
 
   class MTextWatcher implements TextWatcher {
     FlexField flexField;
     @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+      s.length();
     }
 
     @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-
     }
 
     @Override public void afterTextChanged(Editable s) {
@@ -68,11 +67,14 @@ public class ItemViewHolder extends ProxyViewHolder {
 
         //数据不一样才通知，防止设置值的时候，这里死循环的执行
         if (!s.toString().equals(flexField.getSummary())){
-          focusIndex= etSummary.getSelectionStart();
           Bundle bundle = new Bundle();
           bundle.putString("value", s.toString());
-          flexField.getFlexFieldProcessor().onChange(flexField,bundle);
+          if (flexField.getFlexFieldProcessor().onChange(flexField, bundle)) {
+            focusIndex = etSummary.getSelectionStart();//数据接收后，才刷新这个焦点记录
+          }
         }
+      } else {//第一次bind FlexEntity初始化
+        focusIndex = s.length();
       }
     }
   }

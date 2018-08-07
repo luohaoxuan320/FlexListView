@@ -12,7 +12,7 @@ import com.lehow.flex.base.FlexEntity;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.FlexFieldProcessor;
 import com.lehow.newapp.entity.PriceEntity;
-import com.lehow.newapp.entity.PriceEntity$$FlexEntity;
+import com.lehow.newapp.util.DecimalUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,25 +33,30 @@ public class MainActivity extends AppCompatActivity {
     recyclerView.setItemAnimator(null);//这里要取消动画，否则在notifyItemChanged时，会onCreateViewHolder 生成一个新的ViewHolder来做动画的过度，
     // 如果当前的item中含有EditText，会导致我在Holder中记录的光标位置无效。当然也可以考虑在别的地方记录光标位置，目前放在这
 
-    this.flexEntity.setFieldClickListener("aamount", new FlexFieldProcessor() {
+    this.flexEntity.setFieldClickListener("aamount", new FlexFieldProcessor<String>() {
       @Override public void onFieldClick(Activity activity, FlexField flexField) {
 
       }
 
-      @Override public void onChange(FlexField flexField, Bundle bundle) {
-        if (bundle != null) {//级联通知的更新
+      @Override public boolean onChange(FlexField<String> flexField, Bundle bundle) {
+        if (bundle != null) {//EditText输入的更新
           String curInput = bundle.getString("value");
-          float newValue = TextUtils.isEmpty(curInput) ? 0f : Float.parseFloat(curInput);
+          double newValue = DecimalUtil.parse(curInput);
           if (newValue > 10000) {
             Toast.makeText(MainActivity.this, "A价款总价 不能超过总房款价", Toast.LENGTH_SHORT).show();
-            flexField.setValue(
-                flexField.getValue());//通知刷新当前的输入，比如前面一次有效输入是10000，现在输入是10100，这个是将输入框的显示还原为10000
-            flexField.setSummary(String.valueOf(flexField.getValue()));
+            //刷新显示
+            flexField.setValue(flexField.getValue());//通知刷新当前的输入，比如前面一次有效输入是10000，现在输入是10100，这个是将输入框的显示还原为10000
+            flexField.setSummary(flexField.getValue());
+            return false;
           } else {
-            flexField.setValue(newValue);
+            flexField.setValue(curInput);
             flexField.setSummary(curInput);
+            return true;
           }
+        } else {//初始化和级联更新
+          flexField.setSummary(flexField.getValue());
         }
+        return true;
       }
     });
 /*

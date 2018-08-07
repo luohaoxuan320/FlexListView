@@ -191,7 +191,7 @@ public class FlexEntity {
 
     addToMap(aLoan1Rate);
 
-    new FoldCombineFuc(this).getCombineObeserver().subscribe(visibleFieldConsumer);
+    //new FoldCombineFuc(this).getCombineObservable().subscribe(visibleFieldConsumer);
 
    /* aLoanType.valueObservable.flatMap(new Function<Integer, ObservableSource<VisibleField>>() {
       @Override public ObservableSource<VisibleField> apply(Integer s) throws Exception {

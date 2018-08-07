@@ -26,8 +26,8 @@ public class PriceEntity {
 
   @FlexField(title = "A价款选项", proxyAdapter = CategoryAdapter.class, fieldProcessor = CategoryFieldProcessor.class)
   transient boolean aCategory = true;
-  @FlexField(title = "A价款总价", proxyAdapter = NumAdapter.class, fieldProcessor = NumFieldProcessor.class)
-  double aamount = 1000;
+  @FlexField(title = "A价款总价", proxyAdapter = NumAdapter.class) String aamount = "1000";
+      //将这个定义为String，方便数据的处理，不然会觉得莫名的多了一个.0
   @FlexField(title = "折扣信息", hint = "请选择折扣", proxyAdapter = SelectAdapter.class, fieldProcessor = DiscountSelectFieldProcessor.class)
   String adicont;
   @FlexField(title = "折后总价", hint = "", proxyAdapter = ShowAdapter.class, fieldProcessor = NumFieldProcessor.class)
