@@ -27,7 +27,7 @@ public class NumFieldProcessor implements FlexFieldProcessor {
     }
     flexField.setSummary(curInput);
     //通知Recyclerview刷新
-    flexField.setValue(TextUtils.isEmpty(curInput) ? 0f : Float.parseFloat(curInput));
+    flexField.setValue(TextUtils.isEmpty(curInput) ? 0f : Double.parseDouble(curInput));
     return true;
   }
 }
