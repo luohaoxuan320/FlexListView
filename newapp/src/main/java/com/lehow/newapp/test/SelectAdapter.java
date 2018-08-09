@@ -33,7 +33,7 @@ public class SelectAdapter implements FieldProxyAdapter<ItemViewHolder,FlexField
     holder.etSummary.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (entity.getFlexFieldProcessor() != null) {
-          entity.getFlexFieldProcessor().onFieldClick((Activity) holder.itemView.getContext(),entity);
+          entity.getFlexFieldProcessor().onFieldClick(entity);
         }
       }
     });

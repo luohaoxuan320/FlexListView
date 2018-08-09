@@ -9,8 +9,8 @@ import io.reactivex.functions.BiFunction;
  * author: luoh17
  * time: 2018/8/7 10:15
  */
-public class DiscontAmountFuc implements BiFunction<String, String, Double> {
-  @Override public Double apply(String s, String s2) throws Exception {
+public class DiscontAmountFuc implements BiFunction<String, String, String> {
+  @Override public String apply(String s, String s2) throws Exception {
     double aamount = 0;
     if (!TextUtils.isEmpty(s)) {
       aamount = Double.parseDouble(s);
@@ -19,6 +19,6 @@ public class DiscontAmountFuc implements BiFunction<String, String, Double> {
     if (!TextUtils.isEmpty(s2)) {
       discont = Double.parseDouble(s2);
     }
-    return aamount + discont;
+    return (aamount + discont) + "";
   }
 }

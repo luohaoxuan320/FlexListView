@@ -67,9 +67,7 @@ public class ItemViewHolder extends ProxyViewHolder {
 
         //数据不一样才通知，防止设置值的时候，这里死循环的执行
         if (!s.toString().equals(flexField.getSummary())){
-          Bundle bundle = new Bundle();
-          bundle.putString("value", s.toString());
-          if (flexField.getFlexFieldProcessor().onChange(flexField, bundle)) {
+          if (flexField.getFlexFieldProcessor().onChange(flexField, s.toString(), true)) {
             focusIndex = etSummary.getSelectionStart();//数据接收后，才刷新这个焦点记录
           }
         }

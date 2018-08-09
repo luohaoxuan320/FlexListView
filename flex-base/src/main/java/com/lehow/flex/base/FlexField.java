@@ -79,14 +79,16 @@ public class FlexField<T> implements Consumer<T> {
     return flexField.value;
   }
 
-  public FlexFieldProcessor getFlexFieldProcessor() {
+  public FlexFieldProcessor<T> getFlexFieldProcessor() {
     return flexFieldProcessor;
   }
 
-  public FlexField<T> setFlexFieldProcessor(FlexFieldProcessor flexFieldProcessor) {
+  public FlexField<T> setFlexFieldProcessor(FlexFieldProcessor<T> flexFieldProcessor) {
     this.flexFieldProcessor = flexFieldProcessor;
     //设置了处理器后，先来处理下默认值的显示
-    if (flexFieldProcessor != null) flexFieldProcessor.onChange(this, null);
+    if (flexFieldProcessor != null && getValue() != null) {
+      flexFieldProcessor.onChange(this, getValue(), true);
+    }
     return this;
   }
 
@@ -118,8 +120,8 @@ public class FlexField<T> implements Consumer<T> {
   }
 
   @Override public void accept(T t) throws Exception {//由关联数据变化触发的，比如首付金额，由于首付成数或者房价总额变化而触发更新
-    flexField.value = t;
-    if (flexFieldProcessor!=null)flexFieldProcessor.onChange(this,null);
+    //flexField.value = t;
+    if (flexFieldProcessor != null) flexFieldProcessor.onChange(this, t, false);
   }
 
   public String getKey() {

@@ -31,7 +31,7 @@ public class CategoryAdapter implements FieldProxyAdapter<CategoryAdapter.Catego
     holder.title.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(holder.itemView.getContext(),entity.getValue() ? R.mipmap.icon_w_up : R.mipmap.icon_w_down), null);
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        entity.getFlexFieldProcessor().onFieldClick(getActivityFromView(holder.itemView), entity);
+        entity.getFlexFieldProcessor().onFieldClick(entity);
       }
     });
   }

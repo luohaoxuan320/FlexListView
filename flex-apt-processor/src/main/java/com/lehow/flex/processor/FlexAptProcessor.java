@@ -3,6 +3,7 @@ package com.lehow.flex.processor;
 import com.google.auto.service.AutoService;
 import com.lehow.flex.annotations.FlexEntity;
 import com.lehow.flex.annotations.FlexField;
+import com.lehow.flex.annotations.InjectSimpleArrayRes;
 import com.lehow.flex.annotations.ValueDependence;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -12,10 +13,8 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -97,6 +96,9 @@ public class FlexAptProcessor extends AbstractProcessor {
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
                     "proxyAdapter"));
           } else {
+
+            InjectSimpleArrayRes simpleArrayRes =
+                enclosedElement.getAnnotation(InjectSimpleArrayRes.class);
             creteListBuilder.addStatement("add(new $T(\""
                     + key
                     + "\",entity."
@@ -112,12 +114,15 @@ public class FlexAptProcessor extends AbstractProcessor {
                     + flexField.hint()
                     + "\")\n"
                     + "                .setProxyViewType(getProxyViewType($T.class))\n"
-                    + "                .setFlexFieldProcessor(new $T()),"
+                    + "                .setFlexFieldProcessor(new $T($L)),"
                     + flexField.visible()
                     + ")", ClassName.bestGuess("com.lehow.flex.base.FlexField"),
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(), "proxyAdapter"),
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
-                    "fieldProcessor"));
+                    "fieldProcessor"), simpleArrayRes == null ? "" : ("activity,"
+                    + simpleArrayRes.summaryArrayRes()
+                    + ","
+                    + simpleArrayRes.valueArrayRes()));
           }
 
           info(flexField.title());
@@ -156,8 +161,11 @@ public class FlexAptProcessor extends AbstractProcessor {
       MethodSpec constructor = MethodSpec.constructorBuilder()
           .addModifiers(Modifier.PRIVATE)
           .addParameter(
+              ParameterSpec.builder(ClassName.bestGuess("android.app.Activity"), "activity")
+                  .build())
+          .addParameter(
               ParameterSpec.builder(TypeName.get(flexEntityElement.asType()), "entity").build())
-          .addStatement("super(entity)")
+          .addStatement("super(activity,entity)")
           .build();
 
       //添加可见性的依赖关系

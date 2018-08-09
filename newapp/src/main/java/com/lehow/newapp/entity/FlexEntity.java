@@ -101,7 +101,7 @@ public class FlexEntity {
         .setHint("请选择")
         .setSummary("三成")
         .setProxyViewType(getProxyViewType(SelectAdapter.class))
-        .setFlexFieldProcessor(new SimpleSelectFieldProcessor(R.array.pay_percent_2,R.array.pay_integer_2,3 - 1))
+        //.setFlexFieldProcessor(new SimpleSelectFieldProcessor(R.array.pay_percent_2,R.array.pay_integer_2,3 - 1))
         .notifyAdapter(flexFieldAdapter);
 
     addToMap(aFirstPercent);
@@ -127,7 +127,10 @@ public class FlexEntity {
         .setHint("请选择")
         .setValue(2)
         .setSummary("商业贷款")
-        .setProxyViewType(getProxyViewType(SelectAdapter.class)).notifyAdapter(flexFieldAdapter).setFlexFieldProcessor(new SimpleSelectFieldProcessor(R.array.loan_type,R.array.loan_type_value,1));
+        .setProxyViewType(getProxyViewType(SelectAdapter.class))
+        .notifyAdapter(flexFieldAdapter)
+        //.setFlexFieldProcessor(new SimpleSelectFieldProcessor(R.array.loan_type,R.array.loan_type_value,1))
+        ;
 
     addToMap(aLoanType);
 
@@ -149,8 +152,9 @@ public class FlexEntity {
         .setHint("请选择")
         .setProxyViewType(getProxyViewType(SelectAdapter.class))
         .notifyAdapter(flexFieldAdapter)
-        .setFlexFieldProcessor(
-            new SimpleSelectFieldProcessor(R.array.loan_year, R.array.loan_year_value, 30 - 1));
+        //.setFlexFieldProcessor(
+        //    new SimpleSelectFieldProcessor(R.array.loan_year, R.array.loan_year_value, 30 - 1))
+        ;
 
     addToMap(aLoanYear);
 
@@ -180,8 +184,11 @@ public class FlexEntity {
     FlexField<Float> aLoan1Year =new FlexField("aLoan1Year",0f)
         .setTitle("贷款年数")
         .setHint("请选择")
-        .setProxyViewType(getProxyViewType(SelectAdapter.class)).notifyAdapter(flexFieldAdapter).setFlexFieldProcessor(
-            new SimpleSelectFieldProcessor(R.array.loan_year, R.array.loan_year_value, 30 - 1));
+        .setProxyViewType(getProxyViewType(SelectAdapter.class))
+        .notifyAdapter(flexFieldAdapter)
+        //.setFlexFieldProcessor(
+        //    new SimpleSelectFieldProcessor(R.array.loan_year, R.array.loan_year_value, 30 - 1))
+        ;
 
     addToMap(aLoan1Year);
 
@@ -379,7 +386,7 @@ public class FlexEntity {
       FlexFieldProcessor
           fieldProcessor =getTheShowField(requestCode).getFlexFieldProcessor();
       if (fieldProcessor != null) {
-        fieldProcessor.onChange( getTheShowField(requestCode),data.getExtras());
+        fieldProcessor.onActivityResult(getTheShowField(requestCode), data.getExtras());
       }
     }
   }

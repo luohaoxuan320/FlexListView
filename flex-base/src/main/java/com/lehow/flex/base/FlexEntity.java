@@ -1,6 +1,7 @@
 package com.lehow.flex.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -32,21 +33,24 @@ public abstract class FlexEntity<K> {
       //多个field 共用一个proxyAdapter
   protected K entity;
 
-  protected FlexEntity(K entity) {
+  protected Activity activity;
+
+  protected FlexEntity(Activity activity, K entity) {
+    this.activity = activity;
     this.entity = entity;
     createFieldList();
     createDependence();
   }
 
-  public static <T> FlexEntity create(T entity) {
+  public static <T> FlexEntity create(Activity activity, T entity) {
     String className = entity.getClass().getName();
     try {
       Class<? extends FlexEntity> flexEntity =
           (Class<? extends FlexEntity>) Class.forName(className + "$$FlexEntity");
       Constructor<? extends FlexEntity> constructor =
-          flexEntity.getDeclaredConstructor(entity.getClass());
+          flexEntity.getDeclaredConstructor(Activity.class, entity.getClass());
       constructor.setAccessible(true);
-      return constructor.newInstance(entity);
+      return constructor.newInstance(activity, entity);
     } catch (Exception e) {
       throw new RuntimeException("Unable to inject for " + className, e);
     }
@@ -151,6 +155,7 @@ public abstract class FlexEntity<K> {
 
   private class FlexFieldAdapter extends RecyclerView.Adapter<ProxyViewHolder>
       implements Consumer<Integer> {
+
     @NonNull @Override
     public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
       Log.i("TAG", "onCreateViewHolder: ");
@@ -186,7 +191,7 @@ public abstract class FlexEntity<K> {
     if (resultCode == Activity.RESULT_OK) {
       FlexFieldProcessor fieldProcessor = getTheShowField(requestCode).getFlexFieldProcessor();
       if (fieldProcessor != null) {
-        fieldProcessor.onChange(getTheShowField(requestCode), data.getExtras());
+        fieldProcessor.onActivityResult(getTheShowField(requestCode), data.getExtras());
       }
     }
   }

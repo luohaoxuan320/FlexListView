@@ -11,11 +11,15 @@ import com.lehow.flex.base.FlexFieldProcessor;
  * time: 2018/8/2 11:16
  */
 public class CategoryFieldProcessor implements FlexFieldProcessor<Boolean> {
-  @Override public void onFieldClick(Activity activity, FlexField<Boolean> flexField) {
+  @Override public void onFieldClick(FlexField<Boolean> flexField) {
     flexField.setValue(!flexField.getValue());
   }
 
-  @Override public boolean onChange(FlexField flexField, Bundle bundle) {
+  @Override public boolean onChange(FlexField flexField, Boolean newValue, boolean isSelf) {
     return true;
+  }
+
+  @Override public void onActivityResult(FlexField<Boolean> flexField, Bundle resultData) {
+
   }
 }
