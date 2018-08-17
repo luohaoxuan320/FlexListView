@@ -26,11 +26,13 @@
       android:layout_centerVertical="true"
       android:layout_toStartOf="@+id/iv_more"
       android:background="@null"
+      android:inputType="numberDecimal"
       android:hint="请输入金额"
       android:gravity="right"
-      android:inputType="numberDecimal"
       android:textColor="#aaa"
       android:textSize="14sp"
+      android:paddingRight="8dp"
+      android:textIsSelectable="false"
       />
   <ImageView
       android:id="@+id/iv_more"
@@ -38,7 +40,7 @@
       android:layout_width="10dp"
       android:layout_height="wrap_content"
       android:layout_alignParentEnd="true"
-      android:layout_marginLeft="12dp"
+      android:layout_marginLeft="4dp"
       android:src="@mipmap/icon_more"
       />
 </RelativeLayout>

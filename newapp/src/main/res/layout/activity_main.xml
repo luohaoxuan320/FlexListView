@@ -12,6 +12,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
     >
 
 
