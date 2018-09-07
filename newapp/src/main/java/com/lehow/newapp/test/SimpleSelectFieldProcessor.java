@@ -14,7 +14,7 @@ import com.lehow.flex.base.FlexFieldProcessor;
  * author: luoh17
  * time: 2018/7/27 14:31
  */
-public class SimpleSelectFieldProcessor implements FlexFieldProcessor<Integer> {
+public class SimpleSelectFieldProcessor extends FlexFieldProcessor<Integer> {
   int selIndex=-1;
   String[] dataSrc;
   int[] values;
@@ -27,11 +27,11 @@ public class SimpleSelectFieldProcessor implements FlexFieldProcessor<Integer> {
     values = activity.getResources().getIntArray(valueRes);
   }
 
-  @Override public void onFieldClick(FlexField<Integer> flexField) {
+  @Override public void onFieldClick(FlexField<Integer> flexField, int adapterPosition) {
     Intent intent = new Intent(activity, SimpleSelectActivity.class);
     intent.putExtra("dataSrc", dataSrc);
     intent.putExtra("selIndex", selIndex);
-    activity.startActivityForResult(intent,flexField.getAdapterPosition());
+    activity.startActivityForResult(intent, adapterPosition);
   }
 
   @Override
@@ -45,7 +45,7 @@ public class SimpleSelectFieldProcessor implements FlexFieldProcessor<Integer> {
         }
       }
     }
-    flexField.setValue(newValue);
+    flexField.setValue(newValue, true);
     flexField.setSummary(selIndex == -1 ? "" : dataSrc[selIndex]);
 
     return true;

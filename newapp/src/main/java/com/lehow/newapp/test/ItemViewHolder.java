@@ -1,8 +1,5 @@
 package com.lehow.newapp.test;
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -19,7 +16,6 @@ import java.lang.reflect.Method;
  * time: 2018/7/24 16:59
  */
 public class ItemViewHolder extends ProxyViewHolder {
-  private int focusIndex=0;
   TextView tvTitle;
   EditText etSummary;
   ImageView ivMore;
@@ -31,7 +27,7 @@ public class ItemViewHolder extends ProxyViewHolder {
     ivMore = itemView.findViewById(R.id.iv_more);
     Log.i("TAG", "ItemViewHolder: addTextChangedListener");
     etSummary.setOnFocusChangeListener(focusChangeListener);
-    initSoftInput();
+    //initSoftInput(etSummary);
   }
 
   @Override public void onReset() {
@@ -60,68 +56,14 @@ public class ItemViewHolder extends ProxyViewHolder {
           if (!etSummary.getText().toString().equals(flexField.getSummary())) {
             if (flexField.getFlexFieldProcessor()
                 .onChange(flexField, etSummary.getText().toString(), true)) {
-              focusIndex = etSummary.getSelectionStart();//数据接收后，才刷新这个焦点记录
             }
           }
-        } else {//第一次bind FlexEntity初始化
-          focusIndex = etSummary.getText().length();
         }
       }
     }
   };
   public void bindFlexField(FlexField flexField) {
     this.flexField = flexField;//在这里绑定感觉是有点问题的，afterTextChanged先执行了，不过onReset有清空数据，影响不大
-    Log.i("TAG", "bindFlexField: focusIndex="+focusIndex);
-    etSummary.setSelection(Math.min(focusIndex, etSummary.getText().length()));
   }
-
-  private void initSoftInput() {
-    int currentVersion = android.os.Build.VERSION.SDK_INT;
-    if (currentVersion >= 21) {
-      etSummary.setShowSoftInputOnFocus(false);
-    }
-    if (currentVersion >= 16) {//调用隐藏API
-      // 4.1.2
-      try {
-        Class<EditText> cls = EditText.class;
-        Method setSoftInputShownOnFocus;
-        setSoftInputShownOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
-        setSoftInputShownOnFocus.setAccessible(true);
-        setSoftInputShownOnFocus.invoke(etSummary, false);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
- /* class MTextWatcher implements TextWatcher {
-    FlexField flexField;
-    @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-      s.length();
-    }
-
-    @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-    }
-
-    @Override public void afterTextChanged(Editable s) {
-      if (flexField!=null&&flexField.getFlexFieldProcessor()!=null){
-
-        Log.i("TAG", "afterTextChanged: s="
-            + s.toString()
-            + " start="
-            + etSummary.getSelectionStart()
-            + " end="
-            + etSummary.getSelectionEnd());
-
-        //数据不一样才通知，防止设置值的时候，这里死循环的执行
-        if (!s.toString().equals(flexField.getSummary())){
-          if (flexField.getFlexFieldProcessor().onChange(flexField, s.toString(), true)) {
-            focusIndex = etSummary.getSelectionStart();//数据接收后，才刷新这个焦点记录
-          }
-        }
-      } else {//第一次bind FlexEntity初始化
-        focusIndex = s.length();
-      }
-    }
-  }*/
 
 }

@@ -3,6 +3,7 @@ package com.lehow.newapp.test;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,15 +12,15 @@ import com.lehow.newapp.R;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.FieldProxyAdapter;
 import com.lehow.flex.base.ProxyViewHolder;
+import com.lehow.newapp.util.DecimalUtil;
 
 /**
  * desc:
  * author: luoh17
  * time: 2018/7/24 16:59
  */
-public class NumAdapter  implements FieldProxyAdapter<ItemViewHolder,FlexField> {
+public class NumAdapter extends FieldProxyAdapter<ItemViewHolder, FlexField> {
 
-  NumInputFrg numInputFrg = new NumInputFrg();
   @NonNull @Override public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
     View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
     return new ItemViewHolder(inflate);
@@ -34,26 +35,8 @@ public class NumAdapter  implements FieldProxyAdapter<ItemViewHolder,FlexField> 
     holder.etSummary.setHint(entity.getHint());
     holder.etSummary.setText(entity.getSummary());
     holder.ivMore.setVisibility(View.INVISIBLE);
-    holder.etSummary.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override public void onFocusChange(View v, boolean hasFocus) {
-        if (hasFocus) {
-          showInput(v);
-        }
-      }
-    });
-    holder.etSummary.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        showInput(v);
-      }
-    });
-    //holder.etSummary.setInputType(InputType.TYPE_NULL);
+
     holder.bindFlexField(entity);
   }
 
-  private void showInput(View view) {
-    numInputFrg.setEditText((EditText) view);
-    if (!numInputFrg.isVisible()) {
-      numInputFrg.show(((FragmentActivity) view.getContext()).getSupportFragmentManager(), "input");
-    }
-  }
 }

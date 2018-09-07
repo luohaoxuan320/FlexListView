@@ -2,6 +2,8 @@ package com.lehow.newapp;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import org.junit.Test;
@@ -15,6 +17,10 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
   @Test public void addition_isCorrect() {
+    // 新方法，如果不需要四舍五入，可以使用RoundingMode.DOWN
+    BigDecimal bg = new BigDecimal(2.275).setScale(2, RoundingMode.UP);
+
+    System.out.println("2.275=" + bg.toString() + " " + bg.doubleValue());
 
     DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
     System.out.println(decimalFormat.format(1234.50));

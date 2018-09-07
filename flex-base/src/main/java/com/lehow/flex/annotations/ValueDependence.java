@@ -1,6 +1,5 @@
 package com.lehow.flex.annotations;
 
-import com.lehow.flex.base.CombineFuc;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

@@ -14,30 +14,28 @@ import com.lehow.newapp.SimpleSelectActivity;
  * author: luoh17
  * time: 2018/7/27 14:31
  */
-public class PercentSelectFieldProcessor implements FlexFieldProcessor<Integer> {
+public class PercentSelectFieldProcessor extends FlexFieldProcessor<Integer> {
   int selIndex = -1;
   String[] dataSrc;
   int[] values;
   private Activity activity;
 
-  public PercentSelectFieldProcessor(Activity context, @ArrayRes int dataRes,
-      @ArrayRes int valueRes) {
-    activity = (Activity) context;
-    dataSrc = activity.getResources().getStringArray(dataRes);
-    values = activity.getResources().getIntArray(valueRes);
+  public PercentSelectFieldProcessor(Activity context, @ArrayRes int... valueRes) {
+    activity = context;
+    dataSrc = activity.getResources().getStringArray(valueRes[0]);
+    values = activity.getResources().getIntArray(valueRes[1]);
   }
 
-  @Override public void onFieldClick(FlexField<Integer> flexField) {
+  @Override public void onFieldClick(FlexField<Integer> flexField, int adapterPosition) {
     Intent intent = new Intent(activity, SimpleSelectActivity.class);
     intent.putExtra("dataSrc", dataSrc);
     intent.putExtra("selIndex", selIndex);
-    activity.startActivityForResult(intent, flexField.getAdapterPosition());
+    activity.startActivityForResult(intent, adapterPosition);
   }
 
   @Override
   public boolean onChange(FlexField<Integer> flexField, Integer newValue, boolean isSelf) {
-    if (flexField.getValue().intValue() == newValue.intValue()) return false;
-    if (newValue == -1) return false;
+
     if (isSelf) {
 
       if (selIndex == -1) {//初始化数据的时候，会主动回调这个，来处理summary显示的问题，这里也顺带处理一下selIndex
@@ -57,7 +55,7 @@ public class PercentSelectFieldProcessor implements FlexFieldProcessor<Integer> 
       }
     }
     Log.i("TAG", "PercentSelectFieldProcessor onChange: ");
-    flexField.setValue(newValue);
+    flexField.setValue(newValue, isSelf);
     flexField.setSummary(selIndex == -1 ? "" : dataSrc[selIndex]);
 
     return true;

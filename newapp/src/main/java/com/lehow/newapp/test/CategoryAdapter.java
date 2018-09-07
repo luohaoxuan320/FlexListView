@@ -13,30 +13,38 @@ import com.lehow.newapp.R;
 import com.lehow.flex.base.FieldProxyAdapter;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.ProxyViewHolder;
+import java.util.List;
 
 /**
  * desc:
  * author: luoh17
  * time: 2018/8/1 13:44
  */
-public class CategoryAdapter implements FieldProxyAdapter<CategoryAdapter.CategoryHolder,FlexField<Boolean>> {
+public class CategoryAdapter
+    extends FieldProxyAdapter<CategoryAdapter.CategoryHolder, FlexField<Boolean>> {
 
 
   @NonNull @Override public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
     return new CategoryHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false));
   }
 
-  @Override public void onBindViewHolder(@NonNull final CategoryHolder holder,
-      final FlexField<Boolean> entity) {
+  @Override
+  public void onBindViewHolder(final CategoryHolder holder, final FlexField<Boolean> entity) {
     holder.title.setCompoundDrawablesWithIntrinsicBounds(null, null, ContextCompat.getDrawable(holder.itemView.getContext(),entity.getValue() ? R.mipmap.icon_w_up : R.mipmap.icon_w_down), null);
     holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        entity.getFlexFieldProcessor().onFieldClick(entity);
+        entity.getFlexFieldProcessor().onFieldClick(entity, holder.getAdapterPosition());
       }
     });
+    holder.title.setText(entity.getTitle());
   }
 
- static class CategoryHolder extends ProxyViewHolder {
+  @Override public void onBindViewHolder(CategoryHolder holder, final FlexField<Boolean> entity,
+      List<Object> payloads) {
+    onBindViewHolder(holder, entity);
+  }
+
+  static class CategoryHolder extends ProxyViewHolder {
     TextView title;
     public CategoryHolder(View itemView) {
       super(itemView);

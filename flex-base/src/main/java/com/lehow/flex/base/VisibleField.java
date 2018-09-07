@@ -17,13 +17,14 @@ public class VisibleField {
   public VisibleField(int position) {
     this.position = position;
     this.visibleKeys = new ArrayList<>();
-    this.invisibleKeys =new ArrayList<>();
+    this.invisibleKeys = new ArrayList<>();
   }
 
   public VisibleField visible(String... fieldKeys) {
     visibleKeys.addAll(Arrays.asList(fieldKeys));
     return this;
   }
+
   public VisibleField invisible(String... fieldKeys) {
     invisibleKeys.addAll(Arrays.asList(fieldKeys));
     return this;

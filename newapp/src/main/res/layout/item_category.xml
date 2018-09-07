@@ -4,7 +4,6 @@
     android:layout_height="48dp"
     android:id="@+id/title"
     android:textSize="16sp"
-    android:textColor="#fff"
     android:gravity="center"
     android:drawableRight="@mipmap/icon_w_up"
     android:text="123"

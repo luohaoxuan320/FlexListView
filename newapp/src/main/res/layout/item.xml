@@ -33,6 +33,7 @@
       android:textSize="14sp"
       android:paddingRight="8dp"
       android:textIsSelectable="false"
+      android:imeOptions="actionDone"
       />
   <ImageView
       android:id="@+id/iv_more"

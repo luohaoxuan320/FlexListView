@@ -9,13 +9,14 @@ import com.lehow.newapp.R;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.FieldProxyAdapter;
 import com.lehow.flex.base.ProxyViewHolder;
+import java.util.List;
 
 /**
  * desc:
  * author: luoh17
  * time: 2018/7/24 15:39
  */
-public class SelectAdapter implements FieldProxyAdapter<ItemViewHolder,FlexField> {
+public class SelectAdapter extends FieldProxyAdapter<ItemViewHolder, FlexField> {
   @NonNull @Override
   public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
     View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
@@ -33,11 +34,9 @@ public class SelectAdapter implements FieldProxyAdapter<ItemViewHolder,FlexField
     holder.etSummary.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         if (entity.getFlexFieldProcessor() != null) {
-          entity.getFlexFieldProcessor().onFieldClick(entity);
+          entity.getFlexFieldProcessor().onFieldClick(entity, holder.getAdapterPosition());
         }
       }
     });
   }
-
-
 }

@@ -1,17 +1,19 @@
 package com.lehow.flex.base;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+import com.lehow.flex.annotations.R;
 import io.reactivex.functions.Consumer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * desc:
@@ -30,7 +32,7 @@ public abstract class FlexEntity<K> {
   private FlexFieldAdapter flexFieldAdapter = new FlexFieldAdapter();
   private ArrayList<Class<? extends FieldProxyAdapter>> fieldProxyAdapters = new ArrayList<>();
   private SparseArray<FieldProxyAdapter> proxyAdapterCache = new SparseArray<>();
-      //多个field 共用一个proxyAdapter
+  //多个field 共用一个proxyAdapter
   protected K entity;
 
   protected Activity activity;
@@ -68,11 +70,10 @@ public abstract class FlexEntity<K> {
    */
   protected abstract void createDependence();
 
-
-  protected <T> void add(FlexField<T> flexField, boolean isShow) {
-    flexField.notifyAdapter(flexFieldAdapter);
+  protected <T> void add(FlexField<T> flexField) {
+    flexField.notifyAdapterUpdate(flexFieldAdapter);
     allFieldMap.put(flexField.getKey(), flexField);
-    if (isShow) showFieldList.add(flexField.getKey());
+    showFieldList.add(flexField.getKey());
   }
 
   /**
@@ -94,7 +95,7 @@ public abstract class FlexEntity<K> {
     return fieldProxyAdapter;
   }
 
-  protected int getProxyViewType(Class<? extends FieldProxyAdapter> proxyAdapter) {
+  public int getProxyViewType(Class<? extends FieldProxyAdapter> proxyAdapter) {
     int index = fieldProxyAdapters.indexOf(proxyAdapter);
     if (index == -1) {
       fieldProxyAdapters.add(proxyAdapter);
@@ -135,7 +136,7 @@ public abstract class FlexEntity<K> {
    *
    * @param fieldKeys 要批量插入的field对象
    */
-  private boolean visibleFields(int insertPosition, ArrayList<String> fieldKeys) {
+  public boolean visibleFields(int insertPosition, ArrayList<String> fieldKeys) {
 
     /*for (String fieldKey : fieldKeys) {
       if (findFlexField(fieldKey)==null) {
@@ -154,7 +155,7 @@ public abstract class FlexEntity<K> {
   }
 
   private class FlexFieldAdapter extends RecyclerView.Adapter<ProxyViewHolder>
-      implements Consumer<Integer> {
+      implements Consumer<FlexField> {
 
     @NonNull @Override
     public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -167,10 +168,18 @@ public abstract class FlexEntity<K> {
     }
 
     @Override public void onBindViewHolder(@NonNull ProxyViewHolder holder, int position) {
-      Log.i("TAG", "onBindViewHolder: position=" + position + "  " + holder.itemView.getContext());
+      Log.i("TAG", "onBindViewHolder: position=" + position);
       FlexField flexField = getTheShowField(position);
-      flexField.setAdapterPosition(position);
+      flexField.setOnBindPosition(position);
       getProxyAdapter(holder.getItemViewType()).onBindViewHolder(holder, flexField);
+    }
+
+    @Override
+    public void onBindViewHolder(ProxyViewHolder holder, int position, List<Object> payloads) {
+      Log.i("TAG", "onBindViewHolder: position=" + position);
+      FlexField flexField = getTheShowField(position);
+      flexField.setOnBindPosition(position);
+      getProxyAdapter(holder.getItemViewType()).onBindViewHolder(holder, flexField, payloads);
     }
 
     @Override public int getItemCount() {
@@ -182,8 +191,14 @@ public abstract class FlexEntity<K> {
       super.onViewRecycled(holder);
     }
 
-    @Override public void accept(Integer integer) throws Exception {
-      notifyItemChanged(integer);
+    @Override public void accept(FlexField flexField) throws Exception {
+      if (showFieldList.get(flexField.getOnBindPosition()).equals(flexField.getKey())) {
+        //FlexField 在showFieldList中的位置和之前onBind的一致，说明item没有remove或者insert，或者remove和insert对它没影响
+        //直接刷新，避免循环遍历查找位置，毕竟动态修改item的场景应该比较少，能提高效率就提高吧
+        notifyItemChanged(flexField.getOnBindPosition());
+      } else {//item 有remove或者insert，对当前的FlexField产生了影响
+        notifyItemChanged(indexInShow(flexField.getKey()));
+      }
     }
   }
 
@@ -195,15 +210,6 @@ public abstract class FlexEntity<K> {
       }
     }
   }
-
-  protected Consumer<VisibleField> visibleFieldConsumer = new Consumer<VisibleField>() {
-    @Override public void accept(VisibleField visibleField) throws Exception {
-      if (visibleField.getPosition() != -1) {
-        invisibleField(visibleField.getInvisibleKeys());//先删除
-        visibleFields(visibleField.getPosition() + 1, visibleField.getVisibleKeys());
-      }
-    }
-  };
 
   /**
    * 对field点击事件做拦截处理，比如要先从网络获取数据，或者当前页面弹出选择框
@@ -228,9 +234,24 @@ public abstract class FlexEntity<K> {
   /**
    * 当前的key对应的字段在showList中的位置。注意这个跟findFlexField 返回的FlexField 中获取的adapterPosition的区别，
    * adapterPosition只有bindViewHolder后，这个adapterPosition才是有意义的
-   * 而indexInShow 可以识别没有onBindView的，但是在showList中的field，这个跟准确
+   * 而indexInShow 可以识别没有onBindView的，但是在showList中的field，这个更准确
+   * 而当动态的remove或者insert item后，adapterPosition记录的是之前绑定的position，而不是当前真实的position，所以要再找一遍
    */
   public int indexInShow(String fieldName) {
     return showFieldList.indexOf(fieldName);
+  }
+
+  public HashMap<String, FlexField> getAllFieldMap() {
+    return allFieldMap;
+  }
+
+  private IFlodChangeListener iFlodChangeListener;
+
+  public void setiFlodChangeListener(IFlodChangeListener iFlodChangeListener) {
+    this.iFlodChangeListener = iFlodChangeListener;
+  }
+
+  public interface IFlodChangeListener {
+    void onFoldChange();
   }
 }

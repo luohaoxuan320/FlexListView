@@ -8,18 +8,16 @@ import io.reactivex.subjects.BehaviorSubject;
  * author: luoh17
  * time: 2018/7/24 11:42
  */
-public class InnerFlexField<T>{
+public class InnerFlexField<T> {
 
   String key;
   String title;
   String hint;
   String summary;
-   T value;
+  T value;
 
-  public InnerFlexField(String key,  T value) {
+  public InnerFlexField(String key, T value) {
     this.key = key;
     this.value = value;
   }
-
-
 }

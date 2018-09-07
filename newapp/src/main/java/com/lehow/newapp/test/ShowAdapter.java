@@ -8,13 +8,14 @@ import com.lehow.newapp.R;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.FieldProxyAdapter;
 import com.lehow.flex.base.ProxyViewHolder;
+import java.util.List;
 
 /**
  * desc:
  * author: luoh17
  * time: 2018/7/24 16:59
  */
-public class ShowAdapter implements FieldProxyAdapter<ItemViewHolder,FlexField> {
+public class ShowAdapter extends FieldProxyAdapter<ItemViewHolder, FlexField> {
   @NonNull @Override public ProxyViewHolder onCreateViewHolder(@NonNull ViewGroup parent) {
     View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
     return new ItemViewHolder(inflate);

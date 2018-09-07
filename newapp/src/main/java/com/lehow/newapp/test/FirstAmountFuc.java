@@ -15,7 +15,7 @@ public class FirstAmountFuc implements BiFunction<String, Integer, String> {
       total = Double.parseDouble(aDouble);
     }
     if (integer == 0) {//自定义时
-      return "";//不更新当前值
+      return "";
     }
     return total * integer / 10 + "";
   }

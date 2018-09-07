@@ -3,7 +3,7 @@ package com.lehow.flex.processor;
 import com.google.auto.service.AutoService;
 import com.lehow.flex.annotations.FlexEntity;
 import com.lehow.flex.annotations.FlexField;
-import com.lehow.flex.annotations.InjectSimpleArrayRes;
+import com.lehow.flex.annotations.InjectActivityAndArrayRes;
 import com.lehow.flex.annotations.ValueDependence;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -36,8 +36,7 @@ import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
 @AutoService(Processor.class) @SupportedAnnotationTypes({
-    "com.lehow.flex.annotations.FlexEntity", "com.lehow.flex.annotations.FlexField",
-    "com.lehow.flex.annotations.CombineVisible"
+    "com.lehow.flex.annotations.FlexEntity"
 }) @SupportedSourceVersion(SourceVersion.RELEASE_7)
 
 public class FlexAptProcessor extends AbstractProcessor {
@@ -65,8 +64,9 @@ public class FlexAptProcessor extends AbstractProcessor {
       MethodSpec.Builder creteListBuilder = MethodSpec.methodBuilder("createFieldList")
           .addModifiers(Modifier.PROTECTED)
           .returns(TypeName.VOID);
-      MethodSpec.Builder createDependence =
-          MethodSpec.methodBuilder("createDependence").addModifiers(Modifier.PROTECTED).returns(TypeName.VOID);
+      MethodSpec.Builder createDependence = MethodSpec.methodBuilder("createDependence")
+          .addModifiers(Modifier.PROTECTED)
+          .returns(TypeName.VOID);
       for (Element enclosedElement : enclosedElements) {
         FlexField flexField = enclosedElement.getAnnotation(FlexField.class);
         if (flexField != null) {
@@ -90,15 +90,22 @@ public class FlexAptProcessor extends AbstractProcessor {
                     + flexField.hint()
                     + "\")\n"
                     + "                .setProxyViewType(getProxyViewType($T.class))\n"
-                    + "                .setFlexFieldProcessor(null),"
-                    + flexField.visible()
-                    + ")", ClassName.bestGuess("com.lehow.flex.base.FlexField"),
+                    + "                .setFlexFieldProcessor(null))",
+                ClassName.bestGuess("com.lehow.flex.base.FlexField"),
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
                     "proxyAdapter"));
-          } else {
+          } else {//这个给 fieldProcessor 添加构造器
 
-            InjectSimpleArrayRes simpleArrayRes =
-                enclosedElement.getAnnotation(InjectSimpleArrayRes.class);
+            InjectActivityAndArrayRes simpleArrayRes =
+                enclosedElement.getAnnotation(InjectActivityAndArrayRes.class);
+            StringBuilder stringBuilder = new StringBuilder();
+            if (simpleArrayRes != null) {
+              stringBuilder.append("activity");
+              for (int i : simpleArrayRes.value()) {
+                stringBuilder.append("," + i);
+              }
+            }
+
             creteListBuilder.addStatement("add(new $T(\""
                     + key
                     + "\",entity."
@@ -114,15 +121,11 @@ public class FlexAptProcessor extends AbstractProcessor {
                     + flexField.hint()
                     + "\")\n"
                     + "                .setProxyViewType(getProxyViewType($T.class))\n"
-                    + "                .setFlexFieldProcessor(new $T($L)),"
-                    + flexField.visible()
-                    + ")", ClassName.bestGuess("com.lehow.flex.base.FlexField"),
+                    + "                .setFlexFieldProcessor(new $T($L)))",
+                ClassName.bestGuess("com.lehow.flex.base.FlexField"),
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(), "proxyAdapter"),
                 getFieldAnnotationClass(enclosedElement, FlexField.class.getName(),
-                    "fieldProcessor"), simpleArrayRes == null ? "" : ("activity,"
-                    + simpleArrayRes.summaryArrayRes()
-                    + ","
-                    + simpleArrayRes.valueArrayRes()));
+                    "fieldProcessor"), stringBuilder.toString());
           }
 
           info(flexField.title());
@@ -155,8 +158,6 @@ public class FlexAptProcessor extends AbstractProcessor {
             }
           }
         }
-
-
       }
       MethodSpec constructor = MethodSpec.constructorBuilder()
           .addModifiers(Modifier.PRIVATE)
@@ -168,8 +169,6 @@ public class FlexAptProcessor extends AbstractProcessor {
           .addStatement("super(activity,entity)")
           .build();
 
-      //添加可见性的依赖关系
-      initEntityCombineVisible(flexEntityElement, createDependence);
       TypeSpec flexEntityTypeSpec =
           TypeSpec.classBuilder(flexEntityElement.getSimpleName() + "$$FlexEntity")
               .addModifiers(Modifier.PUBLIC)
@@ -177,7 +176,8 @@ public class FlexAptProcessor extends AbstractProcessor {
                   ParameterizedTypeName.get(ClassName.get(com.lehow.flex.base.FlexEntity.class),
                       TypeName.get(flexEntityElement.asType())))
               .addMethod(constructor)
-              .addMethod(creteListBuilder.build()).addMethod(createDependence.build())
+              .addMethod(creteListBuilder.build())
+              .addMethod(createDependence.build())
               .build();
 
       String packageName =
@@ -206,41 +206,6 @@ public class FlexAptProcessor extends AbstractProcessor {
     }
     return null;
   }
-
-  private void initEntityCombineVisible(Element entityElement, MethodSpec.Builder builder) {
-    for (AnnotationMirror annotationMirror : entityElement.getAnnotationMirrors()) {
-      if (annotationMirror.getAnnotationType().toString().equals(FlexEntity.class.getName())) {
-        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotationMirror
-            .getElementValues()
-            .entrySet()) {
-          if (entry.getKey().getSimpleName().toString().equals("combineVisible")) {
-            List value = (List) entry.getValue().getValue();
-            int size = value.size();
-            for (int i = 0; i < size; i++) {
-
-              AnnotationMirror combineVisible = (AnnotationMirror) value.get(i);
-              List keys = null;
-              TypeName className = null;
-              for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry1 : combineVisible
-                  .getElementValues()
-                  .entrySet()) {
-                if (entry1.getKey().getSimpleName().toString().equals("keys")) {
-                  keys = (List) entry1.getValue().getValue();
-                } else if (entry1.getKey().getSimpleName().toString().equals("combineFuc")) {
-                  className = ClassName.get((TypeMirror) (entry1.getValue().getValue()));
-                }
-              }
-              //有一个为空，就不添加
-              if (keys == null || keys.size() == 0 || className == null) continue;
-              builder.addStatement(
-                  "new $T(this).getCombineObservable().subscribe(visibleFieldConsumer)", className);
-            }
-          }
-        }
-      }
-    }
-  }
-
 
 
   private void info(String msg) {
