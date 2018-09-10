@@ -192,7 +192,8 @@ public abstract class FlexEntity<K> {
     }
 
     @Override public void accept(FlexField flexField) throws Exception {
-      if (showFieldList.get(flexField.getOnBindPosition()).equals(flexField.getKey())) {
+      if (flexField.getOnBindPosition() >= 0 && showFieldList.get(flexField.getOnBindPosition())
+          .equals(flexField.getKey())) {
         //FlexField 在showFieldList中的位置和之前onBind的一致，说明item没有remove或者insert，或者remove和insert对它没影响
         //直接刷新，避免循环遍历查找位置，毕竟动态修改item的场景应该比较少，能提高效率就提高吧
         notifyItemChanged(flexField.getOnBindPosition());
