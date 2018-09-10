@@ -86,8 +86,9 @@ public class MainActivity extends AppCompatActivity {
     - hint 右边的提示
     - proxyAdapter 处理该item field的显示和数据绑定（onCreateViewHolder+onBindViewHolder），如果要做一个临时提示，比如提交数据时，首付+贷款+分期与折后总价不等，
     要临时红色高亮提示，可以通过重写 onBindViewHolder(K holder, T entity, List<Object> payloads)来处理
-      ~~~
-        @Override
+      
+    ```
+     @Override
         public void onBindViewHolder(ItemViewHolder holder, FlexField entity, List<Object> payloads) {
           onBindViewHolder(holder, entity);
           if (payloads != null && !payloads.isEmpty()) {
@@ -103,20 +104,22 @@ public class MainActivity extends AppCompatActivity {
             holder.tvTitle.setText(entity.getTitle());
           }
         }
-      ~~~
+    ```
+
       Activity刷新
-      ~~~
+      ```
       flexEntity.getFlexAdapter()
           .notifyItemChanged(flexEntity.indexInShow("aloanAmount"), "首付金额+贷款金额 不等于折后总价");
       
-      ~~~
+      ```
      - fieldProcessor 处理item flex的点击事件和数据加工处理（比如将value 1，转换成 一成 显示）
 
 
 - InjectActivityAndArrayRes 给fieldProcessor 注入Activity和res资源，比如点击item要跳转到一个显示list选择列表的Activity，
     注意FlexFieldProcessor必须有一个含有含有(Activity activity, int... valueRes)这样的构造器
-      ~~~
-      public class SimpleSelectFieldProcessor extends FlexFieldProcessor<Integer> {
+          
+    ```
+    public class SimpleSelectFieldProcessor extends FlexFieldProcessor<Integer> {
       int selIndex=-1;
       String[] dataSrc;
       int[] values;
@@ -136,7 +139,8 @@ public class MainActivity extends AppCompatActivity {
         activity.startActivityForResult(intent, adapterPosition);
       }
      }
-      ~~~
+    ```
+
       
       
 
@@ -154,10 +158,10 @@ public class MainActivity extends AppCompatActivity {
  this.flexEntity.setFieldClickListener("aamount", new FlexFieldProcessor<String>() {});
 ~~~
 
-然后通过flexEntity.findFlexField 来读取当前的值，和修改值
+然后通过flexEntity.findFlexField 来读取当前的值，和修改值。
 
 比如
-~~~
+```
  //A首付金额（校验数据不能超过该项价款折后价）
     flexEntity.setFieldClickListener("adownPayAmount", new FlexFieldProcessor<String>() {
       @Override public void onFieldClick(FlexField flexField, int adapterPosition) {
@@ -232,15 +236,15 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-~~~
+```
 
 ### 选项折叠处理
 有用注解集成进去过，但是感觉不太适用，还是写在代码里。
 这里也有一个坑，当Recyclerview外层嵌套有ScrollView的时候，折叠时Recyclerview的高度显示会有问题，比如一进去的时候只显示4个，展开后显示8个，后面的4个看不到。
 
-== 此时需要在折叠操作后，调用Recyclerview 的 requestLayout，重新measure和layout
+==此时需要在折叠操作后，调用Recyclerview 的 requestLayout，重新measure和layout==
 
-~~~
+```
 
  //观察值，做自更新
  flexEntity.setFieldClickListener("aLoanType", new SimpleSelectFieldProcessor(this,R.array.loan_type,R.array.loan_type_value){
@@ -306,5 +310,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
       }
     });
-~~~
+```
 
+## EditText输入变化和焦点处理
+
+- 如果EditText输入变化，关联数据要实时变化，需要注意 ViewHolder复用时TextWatcher 的add和remove，可以ViewHolderadd一个TextWatcher,然后把FlexField传给TextWatcher，有输入变化直接通知给FlexField，在onBindViewHolder的时候，更新ViewHolder关联的FlexField，避免TextWatcher的add和remove。同时可以记录当前输入的光标index，避免输入后，刷新导致光标位置跳动。
+- EditText输入完后，才通知关联数据变化，如代码中的处理，监听键盘的关闭事件，关闭键盘时，让其失去焦点，同时，触摸非当前EditText的任何区域，先关闭键盘。
