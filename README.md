@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
       ~~~
      - fieldProcessor 处理item flex的点击事件和数据加工处理（比如将value 1，转换成 一成 显示）
 
+
 - InjectActivityAndArrayRes 给fieldProcessor 注入Activity和res资源，比如点击item要跳转到一个显示list选择列表的Activity，
     注意FlexFieldProcessor必须有一个含有含有(Activity activity, int... valueRes)这样的构造器
       ~~~
@@ -138,13 +139,15 @@ public class MainActivity extends AppCompatActivity {
       ~~~
       
       
+
 - @ValueDependence Rxjava 的combineLatest，实现对其他数据的观察监听，更改自己的值
   - dependenOn 要监听的值的字段名
   - func 处理方法，要和combineLatest 入参相匹配
 
-##建议
 
-###复杂的数据级联处理
+## 建议
+
+### 复杂的数据级联处理
 如果要处理复杂的数据联动，比如折后总价变化，首付成数变化，首付金额自动计算，而输入首付金额后，又要自动匹配首付成数。或者如果首付金额，贷款，分期只有一个没有值，就自动推导
 那么就不要用ValueDependence去指定了，否则写的想死。RXjava比较适合单向的数据流动，这种彼此通知变化的，可以在代码中，手动设置关联，
 ~~~
@@ -231,10 +234,11 @@ public class MainActivity extends AppCompatActivity {
 
 ~~~
 
-###选项折叠处理
+### 选项折叠处理
 有用注解集成进去过，但是感觉不太适用，还是写在代码里。
 这里也有一个坑，当Recyclerview外层嵌套有ScrollView的时候，折叠时Recyclerview的高度显示会有问题，比如一进去的时候只显示4个，展开后显示8个，后面的4个看不到。
-==此时需要在折叠操作后，调用Recyclerview 的 requestLayout，重新measure和layout==
+
+== 此时需要在折叠操作后，调用Recyclerview 的 requestLayout，重新measure和layout
 
 ~~~
 
