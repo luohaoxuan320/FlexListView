@@ -1,5 +1,6 @@
 package com.lehow.flex.base;
 
+import android.util.Log;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -12,7 +13,7 @@ import io.reactivex.subjects.PublishSubject;
  * author: luoh17
  * time: 2018/7/27 9:54
  */
-public class FlexField<T> implements Observer<T> {
+public class FlexField<T> implements Consumer<T> {
   InnerFlexField<T> flexField;
 
   /**
@@ -72,6 +73,7 @@ public class FlexField<T> implements Observer<T> {
   }
 
   public FlexField setValue(T value, boolean notifyValue) {
+    Log.i("TAG", "setValue: key=" + getKey());
     flexField.value = value;
     //自身的变化，比如选择首付成数，或者改变房价总额,已通知关联方变化
     if (notifyValue) valueObservable.onNext(value);
@@ -114,11 +116,6 @@ public class FlexField<T> implements Observer<T> {
     return this;
   }
 
-  public void accept(Throwable t) throws Exception {
-    //flexField.value = t;
-
-  }
-
   public String getKey() {
     return flexField.key;
   }
@@ -135,19 +132,8 @@ public class FlexField<T> implements Observer<T> {
     return valueObservable;
   }
 
-  @Override public void onSubscribe(Disposable d) {
-
-  }
-
-  @Override public void onNext(T t) {//由关联数据变化触发的，比如首付金额，由于首付成数或者房价总额变化而触发更新
+  @Override public void accept(T t) throws Exception {//由关联数据变化触发的，比如首付金额，由于首付成数或者房价总额变化而触发更新
     if (flexFieldProcessor != null) flexFieldProcessor.onChange(this, t, false);
-  }
-
-  @Override public void onError(Throwable e) {
-    flexFieldProcessor.onError(e);
-  }
-
-  @Override public void onComplete() {
 
   }
 }

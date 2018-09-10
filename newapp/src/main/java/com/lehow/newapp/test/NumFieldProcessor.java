@@ -19,7 +19,8 @@ public class NumFieldProcessor extends FlexFieldProcessor<String> {
   }
 
   @Override public boolean onChange(FlexField<String> flexField, String newValue, boolean isSelf) {
-    Log.i("TAG", "NumFieldProcessor onChange: value=" + flexField.getValue());
+    Log.i("TAG", "NumFieldProcessor onChange: newValue=" + newValue);
+    if (newValue == null) return false;
     flexField.setSummary(newValue + "");
     //通知Recyclerview刷新
     flexField.setValue(newValue, true);

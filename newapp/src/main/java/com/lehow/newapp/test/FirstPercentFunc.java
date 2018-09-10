@@ -13,12 +13,7 @@ public class FirstPercentFunc implements BiFunction<String, String, Integer> {
   private String lastFirst;
 
   @Override public Integer apply(String total, String first) throws Exception {
-    //折后总价变化，不更新首付成数
-    if (!total.equals(lastTotal)) throw new IllegalArgumentException("不用更新");
     try {
-      if (TextUtils.isEmpty(total) || TextUtils.isEmpty(first)) {
-        throw new IllegalArgumentException("不用更新");
-      }
       double t = Double.parseDouble(total);
       double f = Double.parseDouble(first);
       double percent = f * 10 / t;

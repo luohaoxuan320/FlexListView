@@ -29,19 +29,10 @@ public abstract class FlexFieldProcessor<T> {
    */
   public abstract boolean onChange(FlexField<T> flexField, T newValue, boolean isSelf);
 
-  /**
-   * 转换数据的异常处理
-   */
-  protected void onError(Throwable e) {
-  }
-
-  ;
 
   /**
    * 处理onActivityResult的返回结果，需要在这里主动回调onChange更新
    */
   protected void onActivityResult(FlexField<T> flexField, Bundle resultData) {
   }
-
-  ;
 }

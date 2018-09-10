@@ -22,7 +22,7 @@ public class SimpleSelectFieldProcessor extends FlexFieldProcessor<Integer> {
 
   public SimpleSelectFieldProcessor(Activity context, @ArrayRes int dataRes,
       @ArrayRes int valueRes) {
-    activity = (Activity) context;
+    activity = context;
     dataSrc = activity.getResources().getStringArray(dataRes);
     values = activity.getResources().getIntArray(valueRes);
   }
