@@ -316,3 +316,17 @@ public class MainActivity extends AppCompatActivity {
 
 - 如果EditText输入变化，关联数据要实时变化，需要注意 ViewHolder复用时TextWatcher 的add和remove，可以ViewHolderadd一个TextWatcher,然后把FlexField传给TextWatcher，有输入变化直接通知给FlexField，在onBindViewHolder的时候，更新ViewHolder关联的FlexField，避免TextWatcher的add和remove。同时可以记录当前输入的光标index，避免输入后，刷新导致光标位置跳动。
 - EditText输入完后，才通知关联数据变化，如代码中的处理，监听键盘的关闭事件，关闭键盘时，让其失去焦点，同时，触摸非当前EditText的任何区域，先关闭键盘。
+
+##编辑的时候，Entity都有数据，可以通过Rxjava的 skip方法跳过对数据的处理，直接显示，部分级联计算的数据也要直接显示，比如年数30年，基准利率4.90，选择的是上浮20%（5.88）
+```
+    //A公积金 利率
+    flexEntity.findFlexField("aloanYear")
+        .getValueObservable()
+        .skip(isEdit ? 1 : 0)
+        .map(new Function<String, String>() {
+      @Override public String apply(String year) throws Exception {
+
+        return getGjjRateStr(OtherUtils.strToInt(year.split("年")[0]));//基准利率
+      }
+    }).subscribe(flexEntity.findFlexField("arate"));
+```
