@@ -18,7 +18,9 @@ import com.lehow.flex.base.FlexEntity;
 import com.lehow.flex.base.FlexField;
 import com.lehow.flex.base.FlexFieldProcessor;
 import com.lehow.newapp.entity.PriceEntity;
+import com.lehow.newapp.test.SimpleSelectFieldProcessor;
 import com.lehow.newapp.util.DecimalUtil;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
     implements KeyboardWatcher.OnKeyboardToggleListener {
@@ -71,39 +73,58 @@ public class MainActivity extends AppCompatActivity
 
       }
     });
-/*
- *观察值，做自更新
- flexEntity.setFieldClickListener("aLoanType", new SimpleSelectFieldProcessor(R.array.loan_type,R.array.loan_type,1){
-      @Override public void onChange(FlexField flexField, Bundle bundle) {
-        super.onChange(flexField, bundle);
+
+    //观察值，做自更新
+    flexEntity.setFieldClickListener("aLoanType",
+        new SimpleSelectFieldProcessor(this, R.array.loan_type, R.array.loan_type_value) {
+          @Override
+          public boolean onChange(FlexField<Integer> flexField, Integer newValue, boolean isSelf) {
+            super.onChange(flexField, newValue, isSelf);
         ArrayList<String> add = new ArrayList<>();
         ArrayList<String> remove = new ArrayList<>();
-        switch (getSelIndex()) {
-          case 0:
+            switch (newValue) {
+              case 1:
             add.add("aLoan");
             add.add("aLoanAmount");
             add.add("aLoanYear");
             add.add("aLoanRate");
+                remove.add("aLoan");
+                remove.add("aLoanAmount");
+                remove.add("aLoanYear");
+                remove.add("aLoanRate");
             remove.add("aLoan1");
             remove.add("aLoan1Amount");
             remove.add("aLoan1Year");
             remove.add("aLoan1Rate");
-            flexEntity.showTheField(flexField.getAdapterPosition() + 1, add);
-            //flexEntity.removeTheShowField(remove);
+                flexEntity.invisibleField(remove);
+                flexEntity.visibleFields(flexEntity.indexInShow("aLoanType") + 1, add);
             break;
-          case 1:
+              case 2:
             remove.add("aLoan");
             remove.add("aLoanAmount");
             remove.add("aLoanYear");
             remove.add("aLoanRate");
+                remove.add("aLoan1");
+                remove.add("aLoan1Amount");
+                remove.add("aLoan1Year");
+                remove.add("aLoan1Rate");
             add.add("aLoan1");
             add.add("aLoan1Amount");
             add.add("aLoan1Year");
             add.add("aLoan1Rate");
-            flexEntity.showTheField(flexField.getAdapterPosition() + 1, add);
-            flexEntity.removeTheShowField(remove);
+                flexEntity.invisibleField(remove);
+                flexEntity.visibleFields(flexEntity.indexInShow("aLoanType") + 1, add);
             break;
-          case 2:
+              case 3:
+                remove.add("aLoan");
+                remove.add("aLoanAmount");
+                remove.add("aLoanYear");
+                remove.add("aLoanRate");
+                remove.add("aLoan1");
+                remove.add("aLoan1Amount");
+                remove.add("aLoan1Year");
+                remove.add("aLoan1Rate");
+
             add.add("aLoan");
             add.add("aLoanAmount");
             add.add("aLoanYear");
@@ -112,12 +133,13 @@ public class MainActivity extends AppCompatActivity
             add.add("aLoan1Amount");
             add.add("aLoan1Year");
             add.add("aLoan1Rate");
-            flexEntity.showTheField(flexField.getAdapterPosition() + 1, add);
-            flexEntity.removeTheShowField(remove);
+                flexEntity.invisibleField(remove);
+                flexEntity.visibleFields(flexEntity.indexInShow("aLoanType") + 1, add);
             break;
         }
+            return true;
       }
-    });*/
+        });
 
     findViewById(android.R.id.content).setOnTouchListener(new View.OnTouchListener() {
       @Override public boolean onTouch(View v, MotionEvent event) {
